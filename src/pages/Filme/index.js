@@ -45,6 +45,22 @@ function Filme() {
     );
   }
 
+  function storageFilmes() {
+    const minhaLista = localStorage.getItem("@Filmes");
+    let filmesSalvos = JSON.parse(minhaLista) || [];
+    const filmeAlreadyExists = filmesSalvos.some(
+      (filmesSalvos) => filmesSalvos.id === filme.id,
+    );
+    if (filmeAlreadyExists) {
+      alert("Este filme ja existe na lista");
+      return;
+    }
+
+    filmesSalvos.push(filme);
+    localStorage.setItem("@Filmes", JSON.stringify(filmesSalvos));
+    alert("Filme salvo com sucesso");
+  }
+
   return (
     <div className="filme-info">
       <h1>{filme.title}</h1>
@@ -58,7 +74,7 @@ function Filme() {
       <strong>Avalição: {filme.vote_average} / 10</strong>
 
       <div className="area-buttons">
-        <button>Salvar</button>
+        <button onClick={storageFilmes}>Salvar</button>
         <button>
           <a
             target="blank"
