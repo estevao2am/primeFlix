@@ -9,9 +9,21 @@ function Favoritos() {
     const minhaLista = localStorage.getItem("@Filmes");
     setFilmes(JSON.parse(minhaLista) || []);
   }, []);
+
+  function removeFilme(id) {
+    let filtroFilmes = filme.filter((item) => {
+      return item.id !== id;
+    });
+
+    setFilmes(filtroFilmes);
+    localStorage.setItem("@Filmes", JSON.stringify(filtroFilmes));
+  }
+
   return (
     <div className="meus-filmes">
       <h1>Meus filmes</h1>
+
+      {filme.length === 0 && <span>Voce não possui filmes salvos</span>}
 
       <ul>
         {filme.map((item) => {
@@ -21,7 +33,7 @@ function Favoritos() {
 
               <div>
                 <Link to={`/filme/${item.id}`}>Ver detalhes</Link>
-                <button>Excluir</button>
+                <button onClick={() => removeFilme(item.id)}>Excluir</button>
               </div>
             </li>
           );
