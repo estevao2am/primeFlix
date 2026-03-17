@@ -1,56 +1,73 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import "./filme-info.css";
 import api from "../../services/api";
 
 function Filme() {
   const { id } = useParams();
-  const [filme, setFilme] = useState([]);
-  const [laoding, setLoading] = useState(true);
+  const navigation = useNavigate();
+
+  const [filme, setFilme] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadfilme() {
+    async function loadFilme() {
       await api
         .get(`/movie/${id}`, {
           params: {
             api_key: "8761c57d71624a34dcc17a72b9b1ae49",
             language: "pt-BR",
-            page: 1,
           },
         })
         .then((response) => {
-          setFilme(response.data); // Colocar os dados no useState
+          setFilme(response.data);
           setLoading(false);
-          //console.log(response.data);
         })
         .catch(() => {
-          console.log("Filme não encontrado");
+          console.log("FILME NAO ENCONTRADO");
+          navigation("/", { replace: true });
+          return;
         });
     }
-    loadfilme();
+
+    loadFilme();
 
     return () => {
-      console.log("Componente foi descmotado");
+      console.log("COMPONENTE FOI DESMONTADO");
     };
-  }, []);
+  }, [navigation, id]);
 
-  if (laoding) {
+  if (loading) {
     return (
       <div className="filme-info">
-        <h2>Carregando detalhes...</h2>
+        <h1>Carregando detalhes...</h1>
       </div>
     );
   }
+
   return (
     <div className="filme-info">
       <h1>{filme.title}</h1>
       <img
         src={`https://image.tmdb.org/t/p/original/${filme.backdrop_path}`}
         alt={filme.title}
-        width="70%"
       />
+
       <h3>Sinopse</h3>
       <span>{filme.overview}</span>
       <strong>Avalição: {filme.vote_average} / 10</strong>
+
+      <div className="area-buttons">
+        <button>Salvar</button>
+        <button>
+          <a
+            target="blank"
+            href={`https://youtube.com/results?search_query=${filme.title} Trailer`}
+          >
+            Trailer
+          </a>
+        </button>
+      </div>
     </div>
   );
 }
